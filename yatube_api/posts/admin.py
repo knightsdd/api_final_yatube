@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Group
+from .models import Group, Follow
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -15,4 +15,9 @@ class GroupAdmin(admin.ModelAdmin):
     list_editable = ('description',)
 
 
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ('user', 'following',)
+
+
 admin.site.register(Group, GroupAdmin)
+admin.site.register(Follow, FollowAdmin)

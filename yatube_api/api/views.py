@@ -71,9 +71,10 @@ class FollowViewSet(viewsets.ModelViewSet):
         return Follow.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        if serializer.data['following'] == self.request.user.username:
+
+        if serializer.validated_data['following'] == self.request.user:
             raise exceptions.PermissionDenied(
-                'Нельзя подписаться на самого себя'
-            )
+                'Нельзя подписаться на самого себя')
         else:
+            print('Not permisson')
             serializer.save(user=self.request.user)
