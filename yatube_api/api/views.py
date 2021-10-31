@@ -1,36 +1,27 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import exceptions, permissions, viewsets, filters
+from rest_framework import permissions, viewsets, filters
 from rest_framework.pagination import LimitOffsetPagination
 
 from posts.models import Comment, Follow, Group, Post, User
 
 from .serializers import (CommentSerializer, FollowSerializer, GroupSerializer,
                           PostSerializer)
+from .permissions import IsAuthorOrDenied
 
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
+    permission_classes=(IsAuthorOrDenied,)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def perform_update(self, serializer):
-        if serializer.instance.author != self.request.user:
-            raise exceptions.PermissionDenied(
-                'У вас недостаточно прав для выполнения данного действия.')
-        return super().perform_update(serializer)
-
-    def perform_destroy(self, instance):
-        if instance.author != self.request.user:
-            raise exceptions.PermissionDenied(
-                'У вас недостаточно прав для выполнения данного действия.')
-        return super().perform_destroy(instance)
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes=(IsAuthorOrDenied,)
 
     def get_queryset(self):
         post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
@@ -42,18 +33,6 @@ class CommentViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             post=post
         )
-
-    def perform_update(self, serializer):
-        if serializer.instance.author != self.request.user:
-            raise exceptions.PermissionDenied(
-                'У вас недостаточно прав для выполнения данного действия.')
-        return super().perform_update(serializer)
-
-    def perform_destroy(self, instance):
-        if instance.author != self.request.user:
-            raise exceptions.PermissionDenied(
-                'У вас недостаточно прав для выполнения данного действия.')
-        return super().perform_destroy(instance)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -71,10 +50,4 @@ class FollowViewSet(viewsets.ModelViewSet):
         return Follow.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-
-        if serializer.validated_data['following'] == self.request.user:
-            raise exceptions.PermissionDenied(
-                'Нельзя подписаться на самого себя')
-        else:
-            print('Not permisson')
             serializer.save(user=self.request.user)
