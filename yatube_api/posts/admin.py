@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Group, Follow
+from .models import Follow, Group
 
 
 class GroupAdmin(admin.ModelAdmin):
