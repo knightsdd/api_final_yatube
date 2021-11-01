@@ -16,7 +16,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 class FollowAdmin(admin.ModelAdmin):
-    list_display = ('user', 'following',)
+    list_display = ('pk', 'user', 'following',)
 
 
 admin.site.register(Group, GroupAdmin)

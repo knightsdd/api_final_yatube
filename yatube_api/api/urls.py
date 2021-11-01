@@ -10,11 +10,9 @@ router.register(
     CommentViewSet,
     basename='comments')
 router.register('groups', GroupViewSet)
+router.register('follow', FollowViewSet, basename='follow')
 
 urlpatterns = [
     path('v1/', include(router.urls)),
-    path('v1/follow/', FollowViewSet.as_view({
-        'get': 'list',
-        'post': 'create'
-    })),
+    path('v1/', include('djoser.urls.jwt')),
 ]

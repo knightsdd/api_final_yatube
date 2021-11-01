@@ -3,7 +3,6 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('api/v1/', include('djoser.urls.jwt')),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path(
